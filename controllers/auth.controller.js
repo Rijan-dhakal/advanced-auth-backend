@@ -3,6 +3,7 @@ import { customError } from "../utils/customError.js";
 import bcrypt from "bcryptjs";
 import { generateVerificationToken } from "../utils/generateVerificationToken.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { sendOtpEmail } from "../utils/sendEmail.js";
 
 export const signup = async (req, res, next) => {
   try {
@@ -32,6 +33,7 @@ export const signup = async (req, res, next) => {
 
     const verificationToken = generateVerificationToken();
 
+    
     const newUser = await User.create({
       username,
       email,
@@ -39,13 +41,16 @@ export const signup = async (req, res, next) => {
       verificationToken,
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
-
+    
     // generating a jwt
     generateTokenAndSetCookie(res, newUser._id);
 
+    //sending otp
+    sendOtpEmail(newUser.email, verificationToken);
+
     res.status(201).json({
       success: true,
-      message: "User created successfully",
+      message: "User created and OTP sent successfully",
       user: {
         ...newUser._doc,
         password: undefined, // do not include password in the response
