@@ -46,7 +46,7 @@ Or run directly with Node.js:
 node index.js
 ```
 
-### Thats it
+### Contribution
 
  Author :  [Rijan Dhakal](https://github.com/Rijan-dhakal/advanced-auth-backend) 
 
